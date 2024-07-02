@@ -1,3 +1,7 @@
+"use strict";
+
+main();
+
 function main()
 {
     let game_scene = document.getElementById("game-scene");
