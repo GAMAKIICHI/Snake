@@ -1,12 +1,14 @@
-#version 300 es
-layout(location = 0) in vec3 aPos;
+attribute vec4 a_position;
+attribute vec3 a_color;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+varying lowp vec3 color;
 
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);
+    gl_Position = projection * view * model * a_position;
+    color = a_color;
 }
