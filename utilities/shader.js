@@ -1,6 +1,6 @@
 "use strict";
 
-export class Shader_t
+export class Shader
 {
 
     static shader_program;
@@ -14,7 +14,7 @@ export class Shader_t
 
     getProgram()
     {
-        return this.shader_program;
+        return Shader.shader_program;
     }
 
     loadShaderSource(type)
@@ -79,7 +79,7 @@ export class Shader_t
     {
         console.log("Generating Program...");
 
-        this.shader_program = this.gl.createProgram();
+        Shader.shader_program = this.gl.createProgram();
         
         const vertex_source = await this.loadShaderSource(this.gl.VERTEX_SHADER);
         const fragment_source = await this.loadShaderSource(this.gl.FRAGMENT_SHADER);
@@ -87,11 +87,11 @@ export class Shader_t
         const vertex_shader = this.genShader(this.gl.VERTEX_SHADER, vertex_source);
         const fragment_shader = this.genShader(this.gl.FRAGMENT_SHADER, fragment_source);
 
-        this.gl.attachShader(this.shader_program, vertex_shader);
-        this.gl.attachShader(this.shader_program, fragment_shader);
-        this.gl.linkProgram(this.shader_program);
+        this.gl.attachShader(Shader.shader_program, vertex_shader);
+        this.gl.attachShader(Shader.shader_program, fragment_shader);
+        this.gl.linkProgram(Shader.shader_program);
 
-        let success = this.gl.getProgramParameter(this.shader_program, this.gl.LINK_STATUS);
+        let success = this.gl.getProgramParameter(Shader.shader_program, this.gl.LINK_STATUS);
 
         if(success)
         {
@@ -102,19 +102,24 @@ export class Shader_t
         }
         else if(!success)
         {
-            console.error(this.gl.getProgramInfoLog(this.shader_program));
+            console.error(this.gl.getProgramInfoLog(Shader.shader_program));
 
             return null;
         }
 
     }
 
+    useProgram()
+    {
+        this.gl.useProgram(Shader.shader_program);
+    }
+
     setFloat(uniform, value)
     {
-        let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
-        if(uniform_location === null)
+        let uniform_location = this.gl.getUniformLocation(Shader.shader_program, uniform);
+        if(uniform_location === undefined)
         {
-            console.error(this.gl.getError());
+            this.glError(this.gl);
         }
 
         this.gl.uniform1fv(uniform_location, value);
@@ -122,10 +127,10 @@ export class Shader_t
 
     setVec3(uniform, value)
     {
-        let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
-        if(uniform_location === null)
+        let uniform_location = this.gl.getUniformLocation(Shader.shader_program, uniform);
+        if(uniform_location === undefined)
         {
-            console.error(this.gl.getError());
+            this.glError(this.gl);
         }
         
         this.gl.uniform3fv(uniform_location, value);
@@ -133,12 +138,42 @@ export class Shader_t
 
     setMat4(uniform, value)
     {
-        let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
-        if(uniform_location === null)
+        let uniform_location = this.gl.getUniformLocation(Shader.shader_program, uniform);
+        if(uniform_location === undefined)
         {
-            console.error(this.gl.getError());
+            this.glError(this.gl);
         }
         
         this.gl.uniformMatrix4fv(uniform_location, false, value);
+    }
+
+    glError(gl)
+    {   
+        const error_value = gl.getError();
+
+        switch(error_value)
+        {
+            case gl.NO_ERROR:
+                console.error("No error has been recorded. The value of this constant is 0.");
+                break;
+            case gl.INVALID_ENUM:
+                console.error("An unacceptable value has been specified for an enumerated argument.");
+                break;
+            case gl.INVALID_VALUE:
+                console.error("A numeric argument is out of range.");
+                break;
+            case gl.INVALID_OPERATION:
+                console.error("The specified command is not allowed for the current state.");
+                break;
+            case gl.INVALID_FRAMEBUFFER_OPERATION:
+                console.error("The currently bound framebuffer is not framebuffer complete when trying to render to or to read from it.");
+                break;
+            case gl.OUT_OF_MEMORY:
+                console.error("Not enough memory is left to execute the command.");
+                break;
+            case gl.CONTEXT_LOST_WEBGL:
+                console.error("WebGL context is lost.");
+                break;
+        }
     }
 }
