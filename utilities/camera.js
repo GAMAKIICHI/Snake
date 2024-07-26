@@ -49,6 +49,12 @@ export class Camera
         return mat4.lookAt(mat4.create(), this.cameraPos, eye, this.cameraUp);
     }
 
+    getProjectionMatrix(gl, fov = 55, aspectRatio = gl.canvas.width/gl.canvas.height, near = 0.1, far = 100.0)
+    {
+        const projection = mat4.perspective(mat4.create(), glMatrix.toRadian(fov), aspectRatio, near, far);
+        return projection;
+    }
+
     calculateCameraAngle()
     {   
 
@@ -113,8 +119,6 @@ export class Camera
         }
         if(direction === CameraMovement.DOWN)
         {
-            // this is needed to offset the movement speed when going down since space is required to go up and down
-            this.updateCameraMovement(cameraSpeed * 2);
             this.cameraPos = vec3.sub(vec3.create(), this.cameraPos, this.up);
         }
     }

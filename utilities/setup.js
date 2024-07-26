@@ -16,7 +16,7 @@ export function initGL(element)
     return gl;
 }
 
-export function initBuffers(gl, program, verticies, indicies, colors)
+export function initBuffers(gl, program, verticies, indicies)
 {
     try
     {
