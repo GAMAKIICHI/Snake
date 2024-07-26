@@ -1,101 +1,21 @@
 "use strict";
-import { Shader } from "./shader.js";
-import { mat4, glMatrix} from "../utilities/node_modules/gl-matrix/esm/index.js";
-import { initBuffers } from "./setup.js";
+import { vec3, glMatrix} from "../utilities/node_modules/gl-matrix/esm/index.js";
 import { deltaTime } from "../utilities/time.js";
 import { Camera, CameraMovement } from "../utilities/camera.js"; 
-
-const vertices = 
-[
-    //front square
-    //positions         //colors
-    -0.5,  0.5, 0.5,    1.0, 1.0, 1.0,
-     0.5, -0.5, 0.5,    1.0, 0.0, 0.0,
-     0.5,  0.5, 0.5,    0.0, 1.0, 0.0,
-    -0.5, -0.5, 0.5,    0.0, 0.0, 1.0,
-
-    //back square
-    //positions         //colors
-    -0.5,  0.5, -0.5,   1.0, 1.0, 1.0,
-     0.5, -0.5, -0.5,   1.0, 0.0, 0.0,
-     0.5,  0.5, -0.5,   0.0, 1.0, 0.0,
-    -0.5, -0.5, -0.5,   0.0, 0.0, 1.0,
-
-    //top square
-    //positions         //colors
-    -0.5, 0.5,  0.5,    1.0, 1.0, 1.0,
-     0.5, 0.5,  0.5,    1.0, 0.0, 0.0,
-     0.5, 0.5, -0.5,    0.0, 1.0, 0.0,
-    -0.5, 0.5, -0.5,    0.0, 0.0, 1.0,
-
-    //bottom square
-    //positions         //colors
-    -0.5, -0.5,  0.5,   1.0, 1.0, 1.0,
-     0.5, -0.5,  0.5,   1.0, 0.0, 0.0,
-     0.5, -0.5, -0.5,   0.0, 1.0, 0.0,
-    -0.5, -0.5, -0.5,   0.0, 0.0, 1.0,
-
-    //right square
-    //positions         //colors
-     0.5,  0.5,  0.5,    1.0, 1.0, 1.0,
-     0.5, -0.5,  0.5,    1.0, 0.0, 0.0,
-     0.5,  0.5, -0.5,    0.0, 1.0, 0.0, 
-     0.5, -0.5, -0.5,    0.0, 0.0, 1.0,
-
-    //left square
-    //positions         //colors
-    -0.5,  0.5,  0.5,   1.0, 1.0, 1.0,
-    -0.5, -0.5,  0.5,   1.0, 0.0, 0.0,
-    -0.5,  0.5, -0.5,   0.0, 1.0, 0.0,
-    -0.5, -0.5, -0.5,   0.0, 0.0, 1.0,
-
-];
-
-const indicies = 
-[
-    //front square
-    0, 1, 2,
-    0, 1, 3,
-
-    //back square
-    4, 5, 6,
-    4, 5, 7,
-
-    //top square
-    8, 9, 10,
-    8, 10, 11,
-
-    //bottom square
-    12, 13, 14,
-    12, 14, 15,
-
-    //right square
-    16, 17, 19,
-    16, 18, 19,
-
-    //left square
-    20, 21, 23,
-    20, 22, 23
-
-];
+import { Snake } from "../utilities/snake.js";
 
 export async function render(gl)
 {   
-    const shader_program = new Shader(gl, "../assets/shaders/vector_shader.glsl", "../assets/shaders/fragment_shader.glsl");
-    await shader_program.genProgram();
+    const snake = new Snake(gl, 16, [0.0, 1.0, 0.0], 16, 4);
+    await snake.initSnake();
 
-    const array_buffers = initBuffers(gl, shader_program, vertices, indicies);
-
-    const camera = new Camera();
-
+    const camera = new Camera([0, 0, 6]);
     let delta_time = new deltaTime();
-    var angle = 90.0;
 
     const keys = handleKeyboardInputs();    
     
     function gameScene()
     {
-
         delta_time.startTime();
 
         if(keys['W'])
@@ -118,13 +38,14 @@ export async function render(gl)
         {
             camera.processInput(CameraMovement.UP, delta_time.getTime());
         }
-        if(keys[' '] && keys["CONTROL"])
+        if(keys["CONTROL"])
         {
             camera.processInput(CameraMovement.DOWN, delta_time.getTime());
         }
 
-        angle += 55 * delta_time.getTime();
-        drawScene(gl, shader_program, array_buffers, camera, angle);
+        snake.cube.angle += glMatrix.toRadian(55) * delta_time.getTime();
+
+        drawScene(gl, snake.cube.program, snake.cube.buffers, camera, snake);
 
         requestAnimationFrame(gameScene);
     }
@@ -132,27 +53,28 @@ export async function render(gl)
     gameScene();
 }
 
-export function drawScene(gl, program, buffers, camera, angle)
+export function drawScene(gl, program, buffers, camera, snake)
 {
-    
-    let model = mat4.create();
-    let view = camera.getViewMatrix();
-    let projection = mat4.create();
-
-    mat4.rotate(model, model, glMatrix.toRadian(angle), [0, 1, 0]);
-    mat4.perspective(projection, glMatrix.toRadian(55), gl.canvas.width/gl.canvas.height, 0.1, 100.0);
-
     gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.vertex_buffer);
+
     program.useProgram();
 
-    program.setMat4("model", model);
-    program.setMat4("view", view);
-    program.setMat4("projection", projection);
+    for(let i = 0; i < snake.position.length; i++)
+    {
+        snake.cube.identifyModel();
+        snake.cube.scale([1.6, 1.6, 1.6]);
+        snake.cube.translate(snake.position[i]);
 
-    gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+        program.setMat4("model", snake.cube.model);
+        program.setMat4("view", camera.getViewMatrix());
+        program.setMat4("projection", camera.getProjectionMatrix(gl));
+
+        gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+    }
 }
 
 function handleKeyboardInputs()
