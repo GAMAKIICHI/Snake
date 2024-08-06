@@ -2,22 +2,13 @@
 
 export class Shader
 {
-
-    static shader_program;
-
-    constructor(gl_context, vector_path, fragment_path)
+    constructor(gl_context)
     {
-        this.vector_path = vector_path;
-        this.fragment_path = fragment_path;
         this.gl = gl_context;
+        this.shader_program;
     }
 
-    getProgram()
-    {
-        return Shader.shader_program;
-    }
-
-    loadShaderSource(type)
+    loadShaderSource(type, source_path)
     {
 
         return new Promise((resolve, reject) =>
@@ -25,14 +16,14 @@ export class Shader
             var xhr = new XMLHttpRequest();
 
             try
-            {
+            { 
                 if(type === this.gl.VERTEX_SHADER) 
                 {
-                    xhr.open("GET", this.vector_path);
+                    xhr.open("GET", source_path);
                 }
                 else if(type === this.gl.FRAGMENT_SHADER)
                 {
-                    xhr.open("GET", this.fragment_path);
+                    xhr.open("GET", source_path);
                 }
             }        
             catch(error)
@@ -75,23 +66,23 @@ export class Shader
 
     }
 
-    async genProgram()
+    async genProgram(vertex_path, fragment_path)
     {
         console.log("Generating Program...");
 
-        Shader.shader_program = this.gl.createProgram();
+        this.shader_program = this.gl.createProgram();
         
-        const vertex_source = await this.loadShaderSource(this.gl.VERTEX_SHADER);
-        const fragment_source = await this.loadShaderSource(this.gl.FRAGMENT_SHADER);
+        this.vertex_source = await this.loadShaderSource(this.gl.VERTEX_SHADER, vertex_path);
+        this.fragment_source = await this.loadShaderSource(this.gl.FRAGMENT_SHADER, fragment_path);
 
-        const vertex_shader = this.genShader(this.gl.VERTEX_SHADER, vertex_source);
-        const fragment_shader = this.genShader(this.gl.FRAGMENT_SHADER, fragment_source);
+        const vertex_shader = this.genShader(this.gl.VERTEX_SHADER, this.vertex_source);
+        const fragment_shader = this.genShader(this.gl.FRAGMENT_SHADER, this.fragment_source);
 
-        this.gl.attachShader(Shader.shader_program, vertex_shader);
-        this.gl.attachShader(Shader.shader_program, fragment_shader);
-        this.gl.linkProgram(Shader.shader_program);
+        this.gl.attachShader(this.shader_program, vertex_shader);
+        this.gl.attachShader(this.shader_program, fragment_shader);
+        this.gl.linkProgram(this.shader_program);
 
-        let success = this.gl.getProgramParameter(Shader.shader_program, this.gl.LINK_STATUS);
+        let success = this.gl.getProgramParameter(this.shader_program, this.gl.LINK_STATUS);
 
         if(success)
         {
@@ -102,7 +93,7 @@ export class Shader
         }
         else if(!success)
         {
-            console.error(this.gl.getProgramInfoLog(Shader.shader_program));
+            console.error(this.gl.getProgramInfoLog(this.shader_program));
 
             return null;
         }
@@ -111,12 +102,12 @@ export class Shader
 
     useProgram()
     {
-        this.gl.useProgram(Shader.shader_program);
+        this.gl.useProgram(this.shader_program);
     }
 
     setFloat(uniform, value)
     {
-        let uniform_location = this.gl.getUniformLocation(Shader.shader_program, uniform);
+        let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
         if(uniform_location === undefined)
         {
             this.glError(this.gl);
@@ -127,7 +118,7 @@ export class Shader
 
     setVec3(uniform, value)
     {
-        let uniform_location = this.gl.getUniformLocation(Shader.shader_program, uniform);
+        let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
         if(uniform_location === undefined)
         {
             this.glError(this.gl);
@@ -138,7 +129,7 @@ export class Shader
 
     setMat4(uniform, value)
     {
-        let uniform_location = this.gl.getUniformLocation(Shader.shader_program, uniform);
+        let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
         if(uniform_location === undefined)
         {
             this.glError(this.gl);
