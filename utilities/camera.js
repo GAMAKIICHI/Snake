@@ -1,6 +1,6 @@
 "use strict";
 
-import {mat4, vec3, glMatrix} from "../utilities/node_modules/gl-matrix/esm/index.js";
+import {mat4, vec3, glMatrix} from "./node_modules/gl-matrix/esm/index.js";
 
 export const CameraMovement = Object.freeze({
     FORWARD:    0,

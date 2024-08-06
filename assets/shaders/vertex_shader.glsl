@@ -1,14 +1,16 @@
 attribute vec4 a_position;
-attribute vec3 a_color;
+attribute vec2 a_texcoord;
+
+varying vec2 v_texcoord;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-varying lowp vec3 color;
+varying vec3 color;
 
 void main()
 {
     gl_Position = projection * view * model * a_position;
-    color = a_color;
+    v_texcoord = a_texcoord;
 }
