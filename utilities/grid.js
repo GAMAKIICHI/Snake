@@ -35,7 +35,7 @@ export class Grid extends Shape
 
         this.width = width;
         this.height = height;
-        this.size = size * 0.1;
+        this.size = size;
         this.color = color;
         this.texture;
     }
@@ -65,12 +65,19 @@ export class Grid extends Shape
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
 
-        for(let w = 0; w < this.width; w++)
+        const screenWidth = Math.floor((this.gl.canvas.width / 8)) * 0.1;
+        const screenHeight = Math.floor((this.gl.canvas.height / 8)) * 0.1;
+
+        //These are so we can render grid in the center of the screen
+        const halfWidth = Math.floor(this.width/2);
+        const halfHeight = Math.floor(this.height/2);
+
+        for(let w = -halfWidth; w < halfWidth; w++)
         {
-            for(let h = 0; h < this.height; h++)
+            for(let h = -halfHeight; h < halfHeight; h++)
             {
                 this.identifyModel();
-                this.scale([this.size, this.size, this.size]);
+                this.scale([screenWidth, screenHeight, this.size]);
                 this.translate([w, h, 0]);
 
                 this.setMat4("model", this.model);
