@@ -49,7 +49,7 @@ export class Camera
         return mat4.lookAt(mat4.create(), this.cameraPos, eye, this.cameraUp);
     }
 
-    getProjectionMatrix(gl, fov = 55, aspectRatio = gl.canvas.width/gl.canvas.height, near = 0.1, far = 100.0)
+    getProjectionMatrix(gl, fov = 55, aspectRatio = gl.canvas.width/gl.canvas.height, near = 0.1, far = 500.0)
     {
         const projection = mat4.perspective(mat4.create(), glMatrix.toRadian(fov), aspectRatio, near, far);
         return projection;

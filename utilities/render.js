@@ -10,10 +10,10 @@ export class Render
     constructor(gl)
     {
         this.gl = gl;
-        this.camera = new Camera([0.0, 0.0, 5.0]);
+        this.camera = new Camera([0.0, 0.0, 100.0]);
         this.delta_time = new deltaTime();
         this.snake = new Snake(this.gl, 16, [0.0, 1.0, 0.0], 16, 4);
-        this.grid = new Grid(gl, 8, 8, 16);
+        this.grid = new Grid(gl, 25, 25, 16);
         this.keys = this.KeyboardInputs();
 
         this.gameState = this.gameState.bind(this);
@@ -86,7 +86,7 @@ export class Render
 
         this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
         this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
-        
+
         requestAnimationFrame(this.gameScene);
     }
 }
