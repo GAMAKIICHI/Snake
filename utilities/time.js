@@ -32,4 +32,21 @@ export class deltaTime
         this.last_frame = 0.0;
         this.isTime = false;
     }
+
+    pauseTime()
+    {
+        this.isTime = false;
+    }
+
+    resumeTime()
+    {
+        this.isTime = true;
+    }
+
+
+    resetTime()
+    {
+        this.time = 0.0;
+        this.last_frame = 0.0;
+    }
 }
