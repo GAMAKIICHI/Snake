@@ -5,83 +5,88 @@ import { Camera, CameraMovement } from "./camera.js";
 import { Snake } from "./snake.js";
 import { Grid } from "./grid.js";
 
-export async function render(gl)
-{   
-    const camera = new Camera([0.5, 0, 5]);
-    let delta_time = new deltaTime();
-    
-    const snake = new Snake(gl, 16, [0.0, 1.0, 0.0], 16, 4);
-    await snake.initSnake("../assets/shaders/vertex_shader.glsl", "../assets/shaders/cube_fragment.glsl");
-
-    const grid = new Grid(gl, 8, 8, 16);
-    await grid.initGrid("../assets/shaders/vertex_shader.glsl", "../assets/shaders/grid_fragment.glsl");
-
-    const keys = handleKeyboardInputs();    
-
-    function gameScene()
+export class Render
+{
+    constructor(gl)
     {
-        delta_time.startTime();
-        snake.angle += glMatrix.toRadian(55) * delta_time.getTime();
+        this.gl = gl;
+        this.camera = new Camera([0.0, 0.0, 5.0]);
+        this.delta_time = new deltaTime();
+        this.snake = new Snake(this.gl, 16, [0.0, 1.0, 0.0], 16, 4);
+        this.grid = new Grid(gl, 8, 8, 16);
+        this.keys = this.KeyboardInputs();
 
-
-        if(keys['W'])
-        {
-            camera.processInput(CameraMovement.FORWARD, delta_time.getTime());
-        }
-        if(keys['S'])
-        {
-            camera.processInput(CameraMovement.BACKWARD, delta_time.getTime());
-        }
-        if(keys['D'])
-        {
-            camera.processInput(CameraMovement.RIGHT, delta_time.getTime());
-        }
-        if(keys['A'])
-        {
-            camera.processInput(CameraMovement.LEFT, delta_time.getTime());
-        }
-        if(keys[' '])
-        {
-            camera.processInput(CameraMovement.UP, delta_time.getTime());
-        }
-        if(keys["CONTROL"])
-        {
-            camera.processInput(CameraMovement.DOWN, delta_time.getTime());
-        }
-
-        drawScene(gl, snake, grid, camera);
-
-        requestAnimationFrame(gameScene);
+        this.gameState = this.gameState.bind(this);
+        this.gameScene = this.gameScene.bind(this);
     }
 
-    gameScene();
-}
-
-function drawScene(gl, snake, grid, camera)
-{
-    gl.enable(gl.DEPTH_TEST);
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
-
-    snake.draw(camera.getViewMatrix(), camera.getProjectionMatrix(gl));
-
-    grid.draw(camera.getViewMatrix(), camera.getProjectionMatrix(gl));
-}
-
-function handleKeyboardInputs()
-{
-    const keys = {};
-
-    window.addEventListener("keydown", (event) =>
+    async initRender()
     {
-        keys[event.key.toUpperCase()] = true;
-    });
+        await this.snake.initSnake("../assets/shaders/vertex_shader.glsl", "../assets/shaders/cube_fragment.glsl");
+        await this.grid.initGrid("../assets/shaders/vertex_shader.glsl", "../assets/shaders/grid_fragment.glsl");
+    }
 
-
-    window.addEventListener("keyup", (event) =>
+    KeyboardInputs()
     {
-        keys[event.key.toUpperCase()] = false;
-    });
+        const keys = {};
 
-    return keys;
+        window.addEventListener("keydown", (event) =>
+        {
+            keys[event.key.toUpperCase()] = true;
+        });
+
+
+        window.addEventListener("keyup", (event) =>
+        {
+            keys[event.key.toUpperCase()] = false;
+        });
+
+        return keys;
+    }
+
+    gameState()
+    {
+        this.delta_time.startTime();
+        this.snake.angle += glMatrix.toRadian(55) * this.delta_time.getTime();
+
+        if(this.keys['W'])
+        {
+            this.camera.processInput(CameraMovement.FORWARD, this.delta_time.getTime());
+        }
+        if(this.keys['S'])
+        {
+            this.camera.processInput(CameraMovement.BACKWARD, this.delta_time.getTime());
+        }
+        if(this.keys['D'])
+        {
+            this.camera.processInput(CameraMovement.RIGHT, this.delta_time.getTime());
+        }
+        if(this.keys['A'])
+        {
+            this.camera.processInput(CameraMovement.LEFT, this.delta_time.getTime());
+        }
+        if(this.keys[' '])
+        {
+            this.camera.processInput(CameraMovement.UP, this.delta_time.getTime());
+        }
+        if(this.keys["CONTROL"])
+        {
+            this.camera.processInput(CameraMovement.DOWN, this.delta_time.getTime());
+        }
+
+        requestAnimationFrame(this.gameState);
+
+    }
+
+    gameScene()
+    {
+        this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT || this.gl.DEPTH_BUFFER_BIT);
+
+        this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
+        this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
+        
+        requestAnimationFrame(this.gameScene);
+    }
 }
