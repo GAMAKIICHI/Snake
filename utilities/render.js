@@ -82,7 +82,7 @@ export class Render
         this.gl.clear(this.gl.COLOR_BUFFER_BIT || this.gl.DEPTH_BUFFER_BIT);
 
         this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
-        this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
+        this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl), this.camera.fov, this.camera.cameraPos);
 
         requestAnimationFrame(this.gameScene);
     }

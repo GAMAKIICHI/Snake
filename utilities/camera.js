@@ -13,12 +13,15 @@ export const CameraMovement = Object.freeze({
 
 export class Camera
 {
-    constructor(cameraPos = vec3.fromValues(0.0, 0.0, 3.0), cameraFront = vec3.fromValues(0.0, 0.0, -3.0), cameraUp = vec3.fromValues(0.0, 1.0, 0.0), speed = 2.5)
+    constructor(cameraPos = vec3.fromValues(0.0, 0.0, 3.0), cameraFront = vec3.fromValues(0.0, 0.0, -3.0), cameraUp = vec3.fromValues(0.0, 1.0, 0.0), fov = 55, speed = 2.5)
     {
         this.cameraPos = cameraPos;
         this.cameraFront = cameraFront;
         this.cameraUp = cameraUp;
         this.speed = speed;
+        this.fov = fov;
+        this.aspectRatio;
+
         this.yaw = -90.0;
         this.pitch = 0.0;
 
@@ -49,9 +52,11 @@ export class Camera
         return mat4.lookAt(mat4.create(), this.cameraPos, eye, this.cameraUp);
     }
 
-    getProjectionMatrix(gl, fov = 55, aspectRatio = gl.canvas.width/gl.canvas.height, near = 0.1, far = 500.0)
+    getProjectionMatrix(gl, near = 0.1, far = 500.0)
     {
-        const projection = mat4.perspective(mat4.create(), glMatrix.toRadian(fov), aspectRatio, near, far);
+        this.aspectRatio = gl.canvas.width/gl.canvas.height;
+
+        const projection = mat4.perspective(mat4.create(), glMatrix.toRadian(this.fov), this.aspectRatio, near, far);
         return projection;
     }
 

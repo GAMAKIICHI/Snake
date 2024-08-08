@@ -1,5 +1,5 @@
 "use strict"
-import { mat4 } from "./node_modules/gl-matrix/esm/index.js";
+import { glMatrix, mat4 } from "./node_modules/gl-matrix/esm/index.js";
 import { Shape } from "./shape.js";
 import { Texture } from "./texture.js";
 
@@ -55,7 +55,7 @@ export class Grid extends Shape
         this.model = mat4.create();
     }
 
-    draw(view, projection)
+    draw(view, projection, cameraPos, cameraFov)
     {
 
         this.useProgram();
@@ -65,8 +65,8 @@ export class Grid extends Shape
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
 
-        const screenWidth = Math.floor((this.gl.canvas.width / 8)) * 0.1;
-        const screenHeight = Math.floor((this.gl.canvas.height / 8)) * 0.1;
+        const screenWidth = 2 * Math.tan(glMatrix.toRadian(cameraFov) / 2) * Math.abs(cameraPos[2]) / this.width;
+        const screenHeight = screenWidth; 
 
         //These are so we can render grid in the center of the screen
         const halfWidth = Math.floor(this.width/2);
@@ -78,7 +78,7 @@ export class Grid extends Shape
             {
                 this.identifyModel();
                 this.scale([screenWidth, screenHeight, this.size]);
-                this.translate([w, h, 0]);
+                this.translate([w * screenWidth, h * screenHeight, 0]);
 
                 this.setMat4("model", this.model);
                 this.setMat4("view", view);
@@ -88,4 +88,10 @@ export class Grid extends Shape
             }
         }
     }
+}
+
+function calculateGridDimensions(gl, cameraFov, cameraAspectRatio, cameraPos)
+{
+    const fovY = glMatrix.toRadian(cameraFov);
+    const aspect = gl.canvas.width / gl.canvas.height;
 }
