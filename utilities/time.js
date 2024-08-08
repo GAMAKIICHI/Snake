@@ -11,11 +11,6 @@ export class deltaTime
 
     }
 
-    getTime()
-    {
-        return this.time;
-    }
-
     startTime()
     {
         if(this.isTime === true)

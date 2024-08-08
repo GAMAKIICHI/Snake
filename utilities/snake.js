@@ -2,6 +2,13 @@
 import { Shape } from "./shape.js";
 import { vec3 } from "./node_modules/gl-matrix/esm/index.js";
 
+export const SnakeMovement = Object.freeze({
+    FORWARD:    0,
+    BACKWARD:   1,
+    LEFT:       2,
+    RIGHT:      3,
+});
+
 const cube_vertices = 
 [
     //front square
@@ -76,6 +83,7 @@ const cube_indicies =
 
 ];
 
+
 export class Snake extends Shape
 {
     constructor(gl, size, color, speed, health)
@@ -86,7 +94,10 @@ export class Snake extends Shape
         this.color = color;
         this.speed = speed;
         this.health = health;
-        this.position;
+        this.position = [];
+        this.direction = SnakeMovement.FORWARD;
+        this.interval = 1 / this.speed; //time between moves
+        this.accumulator = 0; //time passed between each move
     }
 
     async initSnake(vertexPath, fragmentPath)
@@ -99,6 +110,39 @@ export class Snake extends Shape
     {
         let lastPosition = this.position.length;
         this.position[lastPosition] = newPosition;
+    }
+
+    changeDirection(direction)
+    {
+        this.direction = direction;
+    }
+
+    move(deltaTime)
+    {
+
+        this.accumulator += deltaTime;
+
+        if(this.accumulator >= this.interval)
+        {
+            this.accumulator -= this.interval; //reset accumulator back to 0
+
+            if(this.direction === SnakeMovement.FORWARD)
+            {
+                this.position[0][1] += 1; //moves one grid square per interval
+            }
+            else if(this.direction === SnakeMovement.BACKWARD)
+            {
+                this.position[0][1] -= 1;
+            }
+            else if(this.direction === SnakeMovement.RIGHT)
+            {
+                this.position[0][0] += 1;
+            }
+            else if(this.direction === SnakeMovement.LEFT)
+            {
+                this.position[0][0] -= 1;
+            }
+        }
     }
 
     draw(view, projection)
