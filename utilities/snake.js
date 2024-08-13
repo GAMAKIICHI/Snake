@@ -147,16 +147,12 @@ export class Snake extends Shape
 
     draw(view, projection)
     {
-        const screenWidth = Math.floor((this.gl.canvas.width / 8)) * 0.1;
-        const screenHeight = Math.floor((this.gl.canvas.height / 8)) * 0.1;
-
         for(let i = 0; i < this.position.length; i++)
         {   
             this.useProgram();
             this.gl.bindVertexArray(this.VAO);
 
             this.identifyModel();
-            this.scale([screenWidth, screenHeight, this.size]);
             this.translate(this.position[i]);
 
             this.setMat4("model", this.model);

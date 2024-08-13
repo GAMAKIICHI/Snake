@@ -29,13 +29,10 @@ const texCoordinates = [
 
 export class Grid extends Shape
 {
-    constructor(gl, width = 8, height = 8, size, color = [0.0, 1.0, 0.0])
+    constructor(gl, color = [0.0, 1.0, 0.0])
     {
         super(gl);
-
-        this.width = width;
-        this.height = height;
-        this.size = size;
+        this.size;
         this.color = color;
         this.texture;
     }
@@ -55,9 +52,8 @@ export class Grid extends Shape
         this.model = mat4.create();
     }
 
-    draw(view, projection, cameraPos, cameraFov)
+    draw(view, projection, camera)
     {
-
         this.useProgram();
         this.gl.bindVertexArray(this.VAO);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
@@ -65,20 +61,15 @@ export class Grid extends Shape
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
 
-        const screenWidth = 2 * Math.tan(glMatrix.toRadian(cameraFov) / 2) * Math.abs(cameraPos[2]) / this.width;
-        const screenHeight = screenWidth; 
+        const screenWidth = Math.floor(visibleHeightAtZDepth(0, camera));
+        const screenHeight = Math.floor(visibleWidthAtZDepth(0, camera));
 
-        //These are so we can render grid in the center of the screen
-        const halfWidth = Math.floor(this.width/2);
-        const halfHeight = Math.floor(this.height/2);
-
-        for(let w = -halfWidth; w < halfWidth; w++)
+        for(let w = -screenWidth; w < screenWidth; w++)
         {
-            for(let h = -halfHeight; h < halfHeight; h++)
+            for(let h = -screenHeight; h < screenHeight; h++)
             {
                 this.identifyModel();
-                this.scale([screenWidth, screenHeight, this.size]);
-                this.translate([w * screenWidth, h * screenHeight, 0]);
+                this.translate([w, h, 0]);
 
                 this.setMat4("model", this.model);
                 this.setMat4("view", view);
@@ -90,8 +81,26 @@ export class Grid extends Shape
     }
 }
 
-function calculateGridDimensions(gl, cameraFov, cameraAspectRatio, cameraPos)
+function visibleHeightAtZDepth(depth, camera)
 {
-    const fovY = glMatrix.toRadian(cameraFov);
-    const aspect = gl.canvas.width / gl.canvas.height;
+    const cameraOffset = camera.cameraPos[2];
+    if(depth < cameraOffset)
+    {
+        depth -= cameraOffset;
+    }
+    else
+    {
+        depth += cameraOffset;
+    }
+
+    const vFOV = camera.fov * Math.PI / 180;
+
+    return 2 * Math.tan(vFOV / 2) * Math.abs(depth);
+}
+
+function visibleWidthAtZDepth(depth, camera)
+{
+    const height = visibleHeightAtZDepth(depth, camera);
+
+    return height * camera.aspectRatio;
 }
