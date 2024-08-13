@@ -52,7 +52,7 @@ export class Camera
         return mat4.lookAt(mat4.create(), this.cameraPos, eye, this.cameraUp);
     }
 
-    getProjectionMatrix(gl, near = 0.1, far = 500.0)
+    getProjectionMatrix(gl, near = 0.1, far = 10000.0)
     {
         this.aspectRatio = gl.canvas.width/gl.canvas.height;
 

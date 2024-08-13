@@ -10,10 +10,11 @@ export class Render
     constructor(gl)
     {
         this.gl = gl;
-        this.camera = new Camera([0.0, 0.0, 100.0]);
+        //grid z index must be odd or grid will squares will render uneven
+        this.camera = new Camera([0.0, 0.0, 15]);
         this.delta_time = new deltaTime();
         this.snake = new Snake(this.gl, 16, [0.0, 1.0, 0.0], 5, 4);
-        this.grid = new Grid(gl, 25, 25, 16);
+        this.grid = new Grid(gl, 15, 15);
         this.keys = this.KeyboardInputs();
 
         this.gameState = this.gameState.bind(this);
@@ -82,7 +83,7 @@ export class Render
         this.gl.clear(this.gl.COLOR_BUFFER_BIT || this.gl.DEPTH_BUFFER_BIT);
 
         this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
-        this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl), this.camera.fov, this.camera.cameraPos);
+        this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl), this.camera);
 
         requestAnimationFrame(this.gameScene);
     }
