@@ -31,23 +31,18 @@ export class Food extends Shape
     async initFood(vertex_path, fragment_path, cameraZ)
     {
         this.sceneSize = cameraZ;
-        this.randomPosition();
+        this.updatePosition();
         await this.initShape(vertex_path, fragment_path, vertices, indicies);
     
     }
 
-    randomPosition()
+    updatePosition()
     {
         const possibleScenePos = Math.floor(this.sceneSize / 2);
         const randomPositionX = getRandomNumber(-possibleScenePos, possibleScenePos);
         const randomPositionY = getRandomNumber(-possibleScenePos, possibleScenePos);
 
         this.position = vec3.set(vec3.create(), randomPositionX, randomPositionY, 0);
-    }
-
-    destroy()
-    {
-        
     }
 
     draw(view, projection)
