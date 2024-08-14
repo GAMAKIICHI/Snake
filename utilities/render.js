@@ -35,7 +35,6 @@ export class Render
     gameState()
     {
         this.delta_time.startTime();
-        this.snake.angle += glMatrix.toRadian(55) * this.delta_time.time;
 
         //Snake Movement
         if(this.keys["ARROWUP"])
@@ -56,7 +55,12 @@ export class Render
         }
 
         this.snake.move(this.delta_time.time);
-    
+        
+        if(isCollision(this.snake.position[0], this.food.position))
+        {
+            this.food.updatePosition();
+        }
+
         requestAnimationFrame(this.gameState);
 
     }

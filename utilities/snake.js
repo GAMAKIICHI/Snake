@@ -86,14 +86,14 @@ const cube_indicies =
 
 export class Snake extends Shape
 {
-    constructor(gl, size, color, speed, health)
+    constructor(gl, size, color, speed)
     {
         super(gl);
 
         this.size = size;
         this.color = color;
         this.speed = speed;
-        this.health = health;
+        this.score = 0;
         this.position = [];
         this.direction = SnakeMovement.FORWARD;
         this.interval = 1 / this.speed; //time between moves
