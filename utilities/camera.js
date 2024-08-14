@@ -128,3 +128,27 @@ export class Camera
         }
     }
 }
+
+export function visibleHeightAtZDepth(depth, camera)
+{
+    const cameraOffset = camera.cameraPos[2];
+    if(depth < cameraOffset)
+    {
+        depth -= cameraOffset;
+    }
+    else
+    {
+        depth += cameraOffset;
+    }
+
+    const vFOV = camera.fov * Math.PI / 180;
+
+    return 2 * Math.tan(vFOV / 2) * Math.abs(depth);
+}
+
+export function visibleWidthAtZDepth(depth, camera)
+{
+    const height = visibleHeightAtZDepth(depth, camera);
+
+    return height * camera.aspectRatio;
+}

@@ -1,12 +1,13 @@
 "use strict"
-import { glMatrix, mat4 } from "./node_modules/gl-matrix/esm/index.js";
+import { mat4 } from "./node_modules/gl-matrix/esm/index.js";
 import { Shape } from "./shape.js";
 import { Texture } from "./texture.js";
+import { visibleWidthAtZDepth, visibleHeightAtZDepth} from "./camera.js"
 
 const vertices = 
 [
     //front square
-    //positions      
+    //positions         
     -0.5,  0.5,  0.5,
      0.5, -0.5,  0.5,
      0.5,  0.5,  0.5,
@@ -79,28 +80,4 @@ export class Grid extends Shape
             }
         }
     }
-}
-
-function visibleHeightAtZDepth(depth, camera)
-{
-    const cameraOffset = camera.cameraPos[2];
-    if(depth < cameraOffset)
-    {
-        depth -= cameraOffset;
-    }
-    else
-    {
-        depth += cameraOffset;
-    }
-
-    const vFOV = camera.fov * Math.PI / 180;
-
-    return 2 * Math.tan(vFOV / 2) * Math.abs(depth);
-}
-
-function visibleWidthAtZDepth(depth, camera)
-{
-    const height = visibleHeightAtZDepth(depth, camera);
-
-    return height * camera.aspectRatio;
 }
