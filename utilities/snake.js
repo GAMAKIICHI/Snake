@@ -83,7 +83,6 @@ const cube_indicies =
 
 ];
 
-
 export class Snake extends Shape
 {
     constructor(gl, size, color, speed)
@@ -106,12 +105,6 @@ export class Snake extends Shape
         await this.initShape(vertexPath, fragmentPath, cube_vertices, cube_indicies);
     }
 
-    grow(newPosition)
-    {
-        let lastPosition = this.position.length;
-        this.position[lastPosition] = newPosition;
-    }
-
     changeDirection(direction)
     {
         this.direction = direction;
@@ -125,6 +118,8 @@ export class Snake extends Shape
         if(this.accumulator >= this.interval)
         {
             this.accumulator -= this.interval; //reset accumulator back to 0
+
+            this.updateTail();
 
             if(this.direction === SnakeMovement.FORWARD)
             {
@@ -142,6 +137,26 @@ export class Snake extends Shape
             {
                 this.position[0][0] -= 1;
             }
+
+            console.log(this.position);
+        }
+
+    }
+
+    grow()
+    {
+        this.position[this.position.length] = vec3.set(vec3.create(), 100, 100, 0);
+    }
+
+    updateTail()
+    {
+        if(this.position.length === 1)
+            return false;
+
+        for(let i = this.position.length - 1; i > 0; i--)
+        {
+            // Copy the position of the segment ahead of it
+            vec3.copy(this.position[i], this.position[i - 1]);
         }
     }
 
