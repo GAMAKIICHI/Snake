@@ -137,8 +137,6 @@ export class Snake extends Shape
             {
                 this.position[0][0] -= 1;
             }
-
-            console.log(this.position);
         }
 
     }

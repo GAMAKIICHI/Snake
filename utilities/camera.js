@@ -13,14 +13,18 @@ export const CameraMovement = Object.freeze({
 
 export class Camera
 {
-    constructor(cameraPos = vec3.fromValues(0.0, 0.0, 3.0), cameraFront = vec3.fromValues(0.0, 0.0, -3.0), cameraUp = vec3.fromValues(0.0, 1.0, 0.0), fov = 55, speed = 2.5)
+    constructor(gl, cameraPos = vec3.fromValues(0.0, 0.0, 3.0), cameraFront = vec3.fromValues(0.0, 0.0, -3.0), cameraUp = vec3.fromValues(0.0, 1.0, 0.0), fov = 55, speed = 2.5)
     {
+        this.gl = gl;
         this.cameraPos = cameraPos;
         this.cameraFront = cameraFront;
         this.cameraUp = cameraUp;
         this.speed = speed;
         this.fov = fov;
-        this.aspectRatio;
+        this.aspectRatio = this.gl.canvas.width/this.gl.canvas.height;
+
+        this.screenWidth = Math.floor(visibleHeightAtZDepth(0, this.cameraPos, this.fov));
+        this.screenHeight = Math.floor(visibleWidthAtZDepth(0, this.cameraPos, this.fov, this.aspectRatio));
 
         this.yaw = -90.0;
         this.pitch = 0.0;
@@ -52,10 +56,8 @@ export class Camera
         return mat4.lookAt(mat4.create(), this.cameraPos, eye, this.cameraUp);
     }
 
-    getProjectionMatrix(gl, near = 0.1, far = 10000.0)
+    getProjectionMatrix(near = 0.1, far = 10000.0)
     {
-        this.aspectRatio = gl.canvas.width/gl.canvas.height;
-
         const projection = mat4.perspective(mat4.create(), glMatrix.toRadian(this.fov), this.aspectRatio, near, far);
         return projection;
     }
@@ -129,9 +131,9 @@ export class Camera
     }
 }
 
-export function visibleHeightAtZDepth(depth, camera)
+function visibleHeightAtZDepth(depth, position, FOV)
 {
-    const cameraOffset = camera.cameraPos[2];
+    const cameraOffset = position[2];
     if(depth < cameraOffset)
     {
         depth -= cameraOffset;
@@ -141,14 +143,14 @@ export function visibleHeightAtZDepth(depth, camera)
         depth += cameraOffset;
     }
 
-    const vFOV = camera.fov * Math.PI / 180;
+    const vFOV = FOV * Math.PI / 180;
 
     return 2 * Math.tan(vFOV / 2) * Math.abs(depth);
 }
 
-export function visibleWidthAtZDepth(depth, camera)
+function visibleWidthAtZDepth(depth, position, FOV, aspectRatio)
 {
-    const height = visibleHeightAtZDepth(depth, camera);
+    const height = visibleHeightAtZDepth(depth, position, FOV);
 
-    return height * camera.aspectRatio;
+    return height * aspectRatio;
 }
