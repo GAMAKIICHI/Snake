@@ -12,13 +12,15 @@ export class Render
     {
         this.gl = gl;
         //camera z index must be odd or grid will squares will render uneven
-        this.camera = new Camera([0.0, 0.0, 15]);
+        this.camera = new Camera(this.gl, [0.0, 0.0, 15]);
         this.delta_time = new deltaTime();
 
         this.snake = new Snake(this.gl, 16, [0.0, 1.0, 0.0], 5, 4);
-        this.grid = new Grid(gl, 15, 15);
-        this.food = new Food(gl);
+        this.grid = new Grid(this.gl, 15, 15);
+        this.food = new Food(this.gl);
         this.keys = KeyboardInputs();
+
+        this.isGameOver = false;
 
         this.gameState = this.gameState.bind(this);
         this.gameScene = this.gameScene.bind(this);
@@ -34,6 +36,9 @@ export class Render
 
     gameState()
     {
+        if(this.isGameOver)
+            return;
+
         this.delta_time.startTime();
 
         //Snake Movement
@@ -62,6 +67,16 @@ export class Render
             this.snake.grow();
         }
 
+        //This checks if snake has went out of screen boundaries
+        if(this.snake.position[0][0] < -Math.floor(this.camera.screenWidth / 2) || this.snake.position[0][0] > Math.floor(this.camera.screenWidth / 2))
+        {
+            this.isGameOver = true;
+        }
+        else if(this.snake.position[0][1] < -Math.floor(this.camera.screenHeight / 2) || this.snake.position[0][1] > Math.floor(this.camera.screenHeight / 2))
+        {
+            this.isGameOver = true;
+        }
+
         requestAnimationFrame(this.gameState);
 
     }
@@ -72,9 +87,12 @@ export class Render
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT || this.gl.DEPTH_BUFFER_BIT);
 
-        this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
-        this.food.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl));
-        this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(this.gl), this.camera);
+        if(this.isGameOver)
+            return;
+
+        this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
+        this.food.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
+        this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
 
         requestAnimationFrame(this.gameScene);
     }

@@ -1,7 +1,6 @@
 "use strict";
 import { Shape } from "./shape.js";
 import { vec3 } from "./node_modules/gl-matrix/esm/index.js";
-import { visibleWidthAtZDepth, visibleHeightAtZDepth} from "./camera.js";
 
 const vertices = 
 [

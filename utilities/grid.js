@@ -2,7 +2,6 @@
 import { mat4 } from "./node_modules/gl-matrix/esm/index.js";
 import { Shape } from "./shape.js";
 import { Texture } from "./texture.js";
-import { visibleWidthAtZDepth, visibleHeightAtZDepth} from "./camera.js"
 
 const vertices = 
 [
@@ -62,8 +61,8 @@ export class Grid extends Shape
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
 
-        const screenWidth = Math.floor(visibleHeightAtZDepth(0, camera));
-        const screenHeight = Math.floor(visibleWidthAtZDepth(0, camera));
+        const screenWidth = camera.screenWidth;
+        const screenHeight = camera.screenHeight;
 
         for(let w = -screenWidth; w < screenWidth; w++)
         {
