@@ -59,6 +59,7 @@ export class Render
         if(isCollision(this.snake.position[0], this.food.position))
         {
             this.food.updatePosition();
+            this.snake.grow();
         }
 
         requestAnimationFrame(this.gameState);
