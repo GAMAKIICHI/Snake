@@ -1,5 +1,4 @@
 "use strict";
-import { glMatrix} from "./node_modules/gl-matrix/esm/index.js";
 import { deltaTime } from "./time.js";
 import { Camera } from "./camera.js"; 
 import { Snake, SnakeMovement } from "./snake.js";
@@ -61,10 +60,20 @@ export class Render
 
         this.snake.move(this.delta_time.time);
         
+        //checks if snake head has collided with food
         if(isCollision(this.snake.position[0], this.food.position))
         {
             this.food.updatePosition();
             this.snake.grow();
+        }
+
+        //this checks if snake head has collided on any part of the body
+        for(let i = 1; i < this.snake.position.length; i++)
+        {
+            if(isCollision(this.snake.position[0], this.snake.position[i]))
+            {
+                this.isGameOver = true;
+            }
         }
 
         //This checks if snake has went out of screen boundaries
