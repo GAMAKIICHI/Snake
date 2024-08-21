@@ -176,4 +176,12 @@ export class Snake extends Shape
         }
     }
 
+    reset()
+    {
+        this.position = [vec3.create()];
+        this.score = 0;
+        this.accumulator = 0;
+        this.direction = SnakeMovement.FORWARD;
+    }
+
 }

@@ -36,10 +36,11 @@ export class Render
 
     gameState()
     {
+        this.delta_time.startTime();
+
         if(this.isGameOver);
         else
         {
-            this.delta_time.startTime();
 
             //Snake Movement
             if(this.keys["ARROWUP"])
@@ -94,7 +95,6 @@ export class Render
     menuState()
     {
         const menu = document.getElementById("menu");
-        const title = menu.children[0];
         const start = menu.children[1];
 
         start.addEventListener("click", () => 
@@ -109,12 +109,15 @@ export class Render
             if(this.isGameOver === true)
             {
                 menu.style.display = "block";
+                this.snake.reset();
+                this.food.updatePosition();
             }
 
-            //im not sure why i need two of these
+            //this checks the condition of the variable isGameOver
             requestAnimationFrame(isHidden);
         }
 
+        //calls the isHidden function
         requestAnimationFrame(isHidden);
        
     }
