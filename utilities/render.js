@@ -5,21 +5,27 @@ import { Snake, SnakeMovement } from "./snake.js";
 import { Grid } from "./grid.js";
 import { Food } from "./food.js";
 
+const color = [0, 255, 0, 255];
+
 export class Render
 {
-    constructor(gl)
+    constructor(gl, color = [1.0, 1.0, 0.0])
     {
         this.gl = gl;
+        this.color = color;
+
         //camera z index must be odd or grid will squares will render uneven
         this.camera = new Camera(this.gl, [0.0, 0.0, 15]);
         this.delta_time = new deltaTime();
 
-        this.snake = new Snake(this.gl, 16, [0.0, 1.0, 0.0], 5, 4);
+        this.snake = new Snake(this.gl, 16, 5, 4);
         this.grid = new Grid(this.gl, 15, 15);
         this.food = new Food(this.gl);
         this.keys = KeyboardInputs();
 
         this.isGameOver = true;
+
+        this.menu = document.getElementById("menu");
 
         this.gameState = this.gameState.bind(this);
         this.gameScene = this.gameScene.bind(this);
@@ -29,9 +35,15 @@ export class Render
 
     async initRender()
     {
-        await this.snake.initSnake("../assets/shaders/vertex_shader.glsl", "../assets/shaders/cube_fragment.glsl");
-        await this.grid.initGrid("../assets/shaders/vertex_shader.glsl", "../assets/shaders/grid_fragment.glsl");
-        await this.food.initFood("../assets/shaders/vertex_shader.glsl", "../assets/shaders/cube_fragment.glsl", this.camera.cameraPos[2]);
+        await this.snake.initSnake("../assets/shaders/vertex.glsl", "../assets/shaders/snake.glsl", color);
+        await this.grid.initGrid("../assets/shaders/vertex.glsl", "../assets/shaders/grid.glsl", color);
+        await this.food.initFood("../assets/shaders/vertex.glsl", "../assets/shaders/snake.glsl", this.camera.cameraPos[2], color);
+        
+        this.menu.style.borderColor = `rgba(${color})`;
+        for(let i = 0; i < this.menu.children.length; i++)
+        {
+            this.menu.children[i].style.color = `rgba(${color})`;
+        }
     }
 
     gameState()
@@ -94,13 +106,12 @@ export class Render
 
     menuState()
     {
-        const menu = document.getElementById("menu");
-        const start = menu.children[1];
+        const start = this.menu.children[1];
 
         start.addEventListener("click", () => 
         {
             this.isGameOver = false;
-            menu.style.display = "none";
+            this.menu.style.display = "none";
         });
 
         //this makes the menu content unhidden
@@ -108,7 +119,7 @@ export class Render
         {
             if(this.isGameOver === true)
             {
-                menu.style.display = "block";
+                this.menu.style.display = "block";
                 this.snake.reset();
                 this.food.updatePosition();
             }

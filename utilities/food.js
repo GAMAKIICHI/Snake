@@ -2,22 +2,6 @@
 import { Shape } from "./shape.js";
 import { vec3 } from "./node_modules/gl-matrix/esm/index.js";
 
-const vertices = 
-[
-    //front square
-    //positions         
-    -0.5,  0.5,  0.5,
-     0.5, -0.5,  0.5,
-     0.5,  0.5,  0.5,
-    -0.5, -0.5,  0.5,
-];
-
-const indicies =
-[
-    0, 1, 2,
-    0, 1, 3,
-];
-
 export class Food extends Shape
 {
     constructor(gl, color = [0.0, 0.0, 0.0])
@@ -27,11 +11,11 @@ export class Food extends Shape
         this.sceneSize;
     }
 
-    async initFood(vertex_path, fragment_path, cameraZ)
+    async initFood(vertex_path, fragment_path, cameraZ, color = [0, 0, 255, 255], texUrl = "")
     {
         this.sceneSize = cameraZ;
         this.updatePosition();
-        await this.initShape(vertex_path, fragment_path, vertices, indicies);
+        await this.initShape(vertex_path, fragment_path, color, texUrl);
     
     }
 

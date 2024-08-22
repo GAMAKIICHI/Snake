@@ -9,88 +9,13 @@ export const SnakeMovement = Object.freeze({
     RIGHT:      3,
 });
 
-const cube_vertices = 
-[
-    //front square
-    //positions      
-    -0.5,  0.5,  0.5,
-     0.5, -0.5,  0.5,
-     0.5,  0.5,  0.5,
-    -0.5, -0.5,  0.5,
-
-    //back square
-    //positions      
-    -0.5,  0.5, -0.5,
-     0.5, -0.5, -0.5,
-     0.5,  0.5, -0.5,
-    -0.5, -0.5, -0.5,
-
-    //top square
-    //positions     
-    -0.5, 0.5,  0.5,
-     0.5, 0.5,  0.5,
-     0.5, 0.5, -0.5,
-    -0.5, 0.5, -0.5,
-
-    //bottom square
-    //positions      
-    -0.5, -0.5,  0.5,
-     0.5, -0.5,  0.5,
-     0.5, -0.5, -0.5,
-    -0.5, -0.5, -0.5,
-
-    //right square
-    //positions      
-     0.5,  0.5,  0.5,
-     0.5, -0.5,  0.5,
-     0.5,  0.5, -0.5,
-     0.5, -0.5, -0.5,
-
-    //left square
-    //positions      
-    -0.5,  0.5,  0.5,
-    -0.5, -0.5,  0.5,
-    -0.5,  0.5, -0.5,
-    -0.5, -0.5, -0.5,
-
-];
-
-const cube_indicies = 
-[
-    //front square
-    0, 1, 2,
-    0, 1, 3,
-
-    //back square
-    4, 5, 6,
-    4, 5, 7,
-
-    //top square
-    8, 9, 10,
-    8, 10, 11,
-
-    //bottom square
-    12, 13, 14,
-    12, 14, 15,
-
-    // //right square
-    16, 17, 19,
-    16, 18, 19,
-
-    //left square
-    20, 21, 23,
-    20, 22, 23
-
-];
-
 export class Snake extends Shape
 {
-    constructor(gl, size, color, speed)
+    constructor(gl, size, speed)
     {
         super(gl);
 
         this.size = size;
-        this.color = color;
         this.speed = speed;
         this.score = 0;
         this.position = [];
@@ -99,10 +24,10 @@ export class Snake extends Shape
         this.accumulator = 0; //time passed between each move
     }
 
-    async initSnake(vertexPath, fragmentPath)
+    async initSnake(vertexPath, fragmentPath, color = [0, 0, 255, 255], texUrl = "")
     {
         this.position  = [vec3.create()];
-        await this.initShape(vertexPath, fragmentPath, cube_vertices, cube_indicies);
+        await this.initShape(vertexPath, fragmentPath, color, texUrl);
     }
 
     changeDirection(direction)
@@ -172,7 +97,7 @@ export class Snake extends Shape
             this.setMat4("view", view);
             this.setMat4("projection", projection);
     
-            this.drawShape();
+            this.drawShape(6);
         }
     }
 
@@ -183,5 +108,4 @@ export class Snake extends Shape
         this.accumulator = 0;
         this.direction = SnakeMovement.FORWARD;
     }
-
 }
