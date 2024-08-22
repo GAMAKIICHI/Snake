@@ -1,50 +1,18 @@
 "use strict"
 import { mat4 } from "./node_modules/gl-matrix/esm/index.js";
 import { Shape } from "./shape.js";
-import { Texture } from "./texture.js";
-
-const vertices = 
-[
-    //front square
-    //positions         
-    -0.5,  0.5,  0.5,
-     0.5, -0.5,  0.5,
-     0.5,  0.5,  0.5,
-    -0.5, -0.5,  0.5,
-];
-
-const indicies =
-[
-    0, 1, 2,
-    0, 1, 3,
-];
-
-const texCoordinates = [
-    // Front face
-    0.0, 0.0,   // Bottom-left
-    1.0, 1.0,   // Top-right
-    1.0, 0.0,   // Bottom-right
-    0.0, 1.0,   // Top-left
-];
 
 export class Grid extends Shape
 {
-    constructor(gl, color = [0.0, 1.0, 0.0])
+    constructor(gl)
     {
         super(gl);
         this.size;
-        this.color = color;
-        this.texture;
     }
 
-    async initGrid(vertexPath, fragmentPath, texturePath = "")
+    async initGrid(vertexPath, fragmentPath, color = [0, 0, 255, 255], texturePath = "")
     {
-        await this.initShape(vertexPath, fragmentPath, vertices, indicies);
-
-        //Vertex Array Buffer must be bound before generating texture
-        this.texture = new Texture(this.gl);
-        this.texture.initTexture();
-        this.texture.genTexture(this.shader_program, texCoordinates, texturePath);
+        await this.initShape(vertexPath, fragmentPath, color, texturePath);
     }
 
     identifyModel()

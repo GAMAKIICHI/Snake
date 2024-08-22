@@ -5,7 +5,6 @@ const level = 0;
 const width = 1;
 const height = 1;
 const border = 0;
-const pixel = new Uint8Array([0, 0, 255, 255]); // Placeholder pixel until the image is loaded
 
 export class Texture
 {
@@ -16,7 +15,7 @@ export class Texture
         this.VBO;
     }
 
-    initTexture()
+    initTexture(color = [0, 0, 255, 255])
     {
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
         
@@ -25,7 +24,7 @@ export class Texture
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
         
-        this.gl.texImage2D(this.gl.TEXTURE_2D, level, this.gl.RGBA, width, height, border, this.gl.RGBA, this.gl.UNSIGNED_BYTE, pixel);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, level, this.gl.RGBA, width, height, border, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(color));
     }
 
     genTexture(program, texCoordinates, url)

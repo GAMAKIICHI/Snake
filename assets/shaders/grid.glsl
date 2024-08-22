@@ -1,11 +1,9 @@
 precision mediump float;
 
 varying vec2 v_texcoord;
-varying vec3 color;
 
 uniform sampler2D u_texture;
 
-vec4 grid_color;
 float pixel = 2.0;
 float border_width = pixel * 0.01;
 

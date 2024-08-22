@@ -7,8 +7,6 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-varying vec3 color;
-
 void main()
 {
     gl_Position = projection * view * model * a_position;
