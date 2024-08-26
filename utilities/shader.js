@@ -1,5 +1,7 @@
 "use strict";
 
+import { glError } from "./setup.js";
+
 export class Shader
 {
     constructor(gl_context)
@@ -108,20 +110,20 @@ export class Shader
     setFloat(uniform, value)
     {
         let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
-        if(uniform_location === undefined)
+        if(uniform_location === null)
         {
-            this.glError(this.gl);
+            glError(this.gl);
         }
 
-        this.gl.uniform1fv(uniform_location, value);
+        this.gl.uniform1f(uniform_location, value);
     }
 
     setVec3(uniform, value)
     {
         let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
-        if(uniform_location === undefined)
+        if(uniform_location === null)
         {
-            this.glError(this.gl);
+            glError(this.gl);
         }
         
         this.gl.uniform3fv(uniform_location, value);
@@ -130,41 +132,11 @@ export class Shader
     setMat4(uniform, value)
     {
         let uniform_location = this.gl.getUniformLocation(this.shader_program, uniform);
-        if(uniform_location === undefined)
+        if(uniform_location === null)
         {
-            this.glError(this.gl);
+            glError(this.gl);
         }
-        
+
         this.gl.uniformMatrix4fv(uniform_location, false, value);
-    }
-
-    glError(gl)
-    {   
-        const error_value = gl.getError();
-
-        switch(error_value)
-        {
-            case gl.NO_ERROR:
-                console.error("No error has been recorded. The value of this constant is 0.");
-                break;
-            case gl.INVALID_ENUM:
-                console.error("An unacceptable value has been specified for an enumerated argument.");
-                break;
-            case gl.INVALID_VALUE:
-                console.error("A numeric argument is out of range.");
-                break;
-            case gl.INVALID_OPERATION:
-                console.error("The specified command is not allowed for the current state.");
-                break;
-            case gl.INVALID_FRAMEBUFFER_OPERATION:
-                console.error("The currently bound framebuffer is not framebuffer complete when trying to render to or to read from it.");
-                break;
-            case gl.OUT_OF_MEMORY:
-                console.error("Not enough memory is left to execute the command.");
-                break;
-            case gl.CONTEXT_LOST_WEBGL:
-                console.error("WebGL context is lost.");
-                break;
-        }
     }
 }

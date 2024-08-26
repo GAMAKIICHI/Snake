@@ -108,10 +108,17 @@ export class Render
     {
         const start = this.menu.children[1];
 
+        //set opacity for grid
+        this.grid.useProgram();
+        this.grid.setFloat("u_gridOpacity", 0.1);
+
         start.addEventListener("click", () => 
         {
             this.isGameOver = false;
             this.menu.style.display = "none";
+            //set opacity for grid
+            this.grid.useProgram();
+            this.grid.setFloat("u_gridOpacity", 1.0);
         });
 
         //this makes the menu content unhidden
