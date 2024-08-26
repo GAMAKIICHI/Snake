@@ -28,14 +28,13 @@ body
     position: absolute;
     font-family: 'arial';
     user-select: none;
-    border: .5rem solid red;
+    border: .5rem solid;
     background-color: rgba(0, 0, 0, 1);
 }
 
 .menu-item
 {
     text-align: center;
-    color: red;
 }
 
 #menu-title
