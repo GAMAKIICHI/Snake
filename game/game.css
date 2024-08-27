@@ -14,7 +14,9 @@ body
     justify-content: center;
     align-items: center;
     position: relative;
-
+    flex-direction: column;
+    font-family: 'arial';
+    user-select: none;
 }
 
 #game-scene
@@ -26,8 +28,6 @@ body
 #menu
 {
     position: absolute;
-    font-family: 'arial';
-    user-select: none;
     border: .5rem solid;
     background-color: rgba(0, 0, 0, 1);
 }
@@ -49,4 +49,16 @@ body
     font-weight: 100;
     font-size: 2.5rem;
     margin: 0 0 1rem 0;
+}
+
+#score
+{
+    display: flex;
+    justify-content: space-between;
+    width: 500px;
+}
+
+.score-item
+{
+    margin: 0, 0, 0, 0;
 }
