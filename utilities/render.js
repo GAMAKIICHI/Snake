@@ -87,13 +87,19 @@ export class Render
                 this.updateScore();
             }
 
-            //this checks if snake head has collided on any part of the body
             for(let i = 1; i < this.snake.position.length; i++)
             {
+                //this checks if snake head has collided on any part of the body
                 if(isCollision(this.snake.position[0], this.snake.position[i]))
                 {
                     this.isGameOver = true;
                     this.updateHighScore();
+                }
+
+                //this makes sure the food never spawns in anyposition the snake currently is in
+                if(this.snake.position[i] === this.food.position)
+                {
+                    this.food.updatePosition();
                 }
             }
 
