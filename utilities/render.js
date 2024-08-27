@@ -24,6 +24,7 @@ export class Render
         this.keys = KeyboardInputs();
 
         this.isGameOver = true;
+        this.highScore = 0;
 
         this.menu = document.getElementById("menu");
 
@@ -44,6 +45,9 @@ export class Render
         {
             this.menu.children[i].style.color = `rgba(${color})`;
         }
+
+        this.updateScore();
+        this.updateHighScore();
     }
 
     gameState()
@@ -79,6 +83,8 @@ export class Render
             {
                 this.food.updatePosition();
                 this.snake.grow();
+                this.snake.score++;
+                this.updateScore();
             }
 
             //this checks if snake head has collided on any part of the body
@@ -87,6 +93,7 @@ export class Render
                 if(isCollision(this.snake.position[0], this.snake.position[i]))
                 {
                     this.isGameOver = true;
+                    this.updateHighScore();
                 }
             }
 
@@ -94,10 +101,12 @@ export class Render
             if(this.snake.position[0][0] < -Math.floor(this.camera.screenWidth / 2) || this.snake.position[0][0] > Math.floor(this.camera.screenWidth / 2))
             {
                 this.isGameOver = true;
+                this.updateHighScore();
             }
             else if(this.snake.position[0][1] < -Math.floor(this.camera.screenHeight / 2) || this.snake.position[0][1] > Math.floor(this.camera.screenHeight / 2))
             {
                 this.isGameOver = true;
+                this.updateHighScore();
             }
         }
         requestAnimationFrame(this.gameState);
@@ -116,6 +125,9 @@ export class Render
         {
             this.isGameOver = false;
             this.menu.style.display = "none";
+            this.snake.score = 0;
+            this.updateScore();
+
             //set opacity for grid
             this.grid.useProgram();
             this.grid.setFloat("u_gridOpacity", 1.0);
@@ -150,7 +162,7 @@ export class Render
 
             this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
             this.food.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
-            this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
+            // this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
         }
 
         requestAnimationFrame(this.gameScene);
@@ -163,10 +175,26 @@ export class Render
         else
         {
             clearScreen(this.gl);
-            this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
+            // this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
         }
 
         requestAnimationFrame(this.menuScene);
+    }
+
+    updateScore()
+    {
+        const scoreEle = document.getElementById("score-current");
+        scoreEle.textContent = `SCORE: ${this.snake.score}`;
+    }
+
+    updateHighScore()
+    {
+        const highScoreEle = document.getElementById("score-high");
+
+        if(this.snake.score > this.highScore)
+            this.highScore = this.snake.score;
+
+        highScoreEle.textContent = `HIGH SCORE: ${this.highScore}`;
     }
 }
 
