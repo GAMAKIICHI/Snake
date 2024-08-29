@@ -59,19 +59,19 @@ export class Render
         {
 
             //Snake Movement
-            if(this.keys["ARROWUP"])
+            if(this.keys["ARROWUP"] && this.snake.direction != SnakeMovement.BACKWARD)
             {
                 this.snake.changeDirection(SnakeMovement.FORWARD);
             }
-            else if(this.keys["ARROWDOWN"])
+            else if(this.keys["ARROWDOWN"] && this.snake.direction != SnakeMovement.FORWARD)
             {
                 this.snake.changeDirection(SnakeMovement.BACKWARD);
             }
-            else if(this.keys["ARROWRIGHT"])
+            else if(this.keys["ARROWRIGHT"] && this.snake.direction != SnakeMovement.LEFT)
             {
                 this.snake.changeDirection(SnakeMovement.RIGHT);
             }
-            else if(this.keys["ARROWLEFT"])
+            else if(this.keys["ARROWLEFT"] && this.snake.direction != SnakeMovement.RIGHT)
             {
                 this.snake.changeDirection(SnakeMovement.LEFT);
             }
