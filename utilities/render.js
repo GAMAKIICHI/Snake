@@ -9,10 +9,9 @@ const color = [0, 255, 0, 255];
 
 export class Render
 {
-    constructor(gl, color = [1.0, 1.0, 0.0])
+    constructor(gl)
     {
         this.gl = gl;
-        this.color = color;
 
         //camera z index must be odd or grid will squares will render uneven
         this.camera = new Camera(this.gl, [0.0, 0.0, 15]);
@@ -39,12 +38,6 @@ export class Render
         await this.snake.initSnake("../assets/shaders/vertex.glsl", "../assets/shaders/snake.glsl", color);
         await this.grid.initGrid("../assets/shaders/vertex.glsl", "../assets/shaders/grid.glsl", color);
         await this.food.initFood("../assets/shaders/vertex.glsl", "../assets/shaders/snake.glsl", this.camera.cameraPos[2], color);
-        
-        this.menu.style.borderColor = `rgba(${color})`;
-        for(let i = 0; i < this.menu.children.length; i++)
-        {
-            this.menu.children[i].style.color = `rgba(${color})`;
-        }
 
         this.updateScore();
         this.updateHighScore();
