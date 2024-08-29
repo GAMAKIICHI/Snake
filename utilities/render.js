@@ -24,6 +24,7 @@ export class Render
 
         this.isGameOver = true;
         this.highScore = 0;
+        this.isGrid = false;
 
         this.menu = document.getElementById("menu");
 
@@ -115,6 +116,7 @@ export class Render
     menuState()
     {
         const start = this.menu.children[1];
+        const gridCheck = document.getElementById("grid-check");
 
         //set opacity for grid
         this.grid.useProgram();
@@ -130,6 +132,11 @@ export class Render
             //set opacity for grid
             this.grid.useProgram();
             this.grid.setFloat("u_gridOpacity", 1.0);
+        });
+
+        gridCheck.addEventListener("change", () =>
+        {
+            this.isGrid = !this.isGrid;
         });
 
         //this makes the menu content unhidden
@@ -161,7 +168,9 @@ export class Render
 
             this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
             this.food.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
-            // this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
+            
+            if(this.isGrid)
+                this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
         }
 
         requestAnimationFrame(this.gameScene);
@@ -174,7 +183,9 @@ export class Render
         else
         {
             clearScreen(this.gl);
-            // this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
+
+            if(this.isGrid)
+                this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
         }
 
         requestAnimationFrame(this.menuScene);
