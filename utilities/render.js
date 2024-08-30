@@ -26,7 +26,7 @@ export class Render
         this.highScore = 0;
         this.isGrid = false;
 
-        this.menu = document.getElementById("menu");
+        this.menu = document.getElementById("menu-container");
 
         this.gameState = this.gameState.bind(this);
         this.gameScene = this.gameScene.bind(this);
