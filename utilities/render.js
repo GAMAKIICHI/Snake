@@ -2,7 +2,6 @@
 import { deltaTime } from "./time.js";
 import { Camera } from "./camera.js"; 
 import { Snake, SnakeMovement } from "./snake.js";
-import { Grid } from "./grid.js";
 import { Food } from "./food.js";
 
 const color = [0, 255, 0, 255];
@@ -18,7 +17,6 @@ export class Render
         this.delta_time = new deltaTime();
 
         this.snake = new Snake(this.gl, 16, 5, 4);
-        this.grid = new Grid(this.gl, 15, 15);
         this.food = new Food(this.gl);
         this.keys = KeyboardInputs();
 
@@ -36,7 +34,6 @@ export class Render
     async initRender()
     {
         await this.snake.initSnake("../assets/shaders/vertex.glsl", "../assets/shaders/snake.glsl", color);
-        await this.grid.initGrid("../assets/shaders/vertex.glsl", "../assets/shaders/grid.glsl", color);
         await this.food.initFood("../assets/shaders/vertex.glsl", "../assets/shaders/snake.glsl", this.camera.cameraPos[2], color);
 
         this.updateScore();
@@ -115,11 +112,6 @@ export class Render
     menuState()
     {
         const start = this.menu.children[1];
-        const gridCheck = document.getElementById("grid-check");
-
-        //set opacity for grid
-        this.grid.useProgram();
-        this.grid.setFloat("u_gridOpacity", 0.1);
 
         start.addEventListener("click", () => 
         {
@@ -128,9 +120,6 @@ export class Render
             this.snake.score = 0;
             this.updateScore();
 
-            //set opacity for grid
-            this.grid.useProgram();
-            this.grid.setFloat("u_gridOpacity", 1.0);
         });
 
         //this makes the menu content unhidden
@@ -162,9 +151,7 @@ export class Render
 
             this.snake.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
             this.food.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix());
-            
-            if(this.isGrid)
-                this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
+        
         }
 
         requestAnimationFrame(this.gameScene);
@@ -177,9 +164,6 @@ export class Render
         else
         {
             clearScreen(this.gl);
-
-            if(this.isGrid)
-                this.grid.draw(this.camera.getViewMatrix(), this.camera.getProjectionMatrix(), this.camera);
         }
 
         requestAnimationFrame(this.menuScene);
