@@ -24,7 +24,6 @@ export class Render
 
         this.isGameOver = true;
         this.highScore = 0;
-        this.isGrid = false;
 
         this.menu = document.getElementById("menu-container");
 
@@ -132,11 +131,6 @@ export class Render
             //set opacity for grid
             this.grid.useProgram();
             this.grid.setFloat("u_gridOpacity", 1.0);
-        });
-
-        gridCheck.addEventListener("change", () =>
-        {
-            this.isGrid = !this.isGrid;
         });
 
         //this makes the menu content unhidden
